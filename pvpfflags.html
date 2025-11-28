@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPS FFLAGS GENERATOR</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#FF3B3B',
+                            dark: '#0f0f0f',
+                            surface: '#1a1a1a',
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 1.5s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styles for background and glass effect */
+        body {
+            background: #1a1a1a;
+            background-image: radial-gradient(circle at center, rgba(255,255,255,0.05), rgba(30,30,30,1) 60%, rgba(20,20,20,1) 100%);
+            min-height: 100vh;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .glass-output {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            white-space: pre-wrap; /* Preserve line breaks */
+        }
+
+        /* Loading spinner animation */
+        .loading-spinner {
+            border-top-color: transparent;
+            border-right-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-gray-200 font-sans flex flex-col items-center p-8">
+
+    <!-- Floating Badge -->
+    <div class="fixed top-6 right-6 z-50">
+        <span class="bg-brand-red/90 text-white px-3 py-1 rounded text-xs font-bold tracking-widest shadow-[0_0_15px_rgba(255,59,59,0.6)] border border-red-400/50 backdrop-blur-sm">
+            BETA v2.0
+        </span>
+    </div>
+
+    <main class="w-full max-w-4xl flex flex-col items-center">
+        
+        <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight text-glow uppercase italic text-center">
+            PVP <span class="text-brand-red">FFLAGS</span> GENERATOR (NEW)
+        </h1>
+
+        <p class="text-gray-400 text-sm mb-10 italic">
+            Note: Generating takes between 1-10 seconds depending on the machine. (It's random basically)
+        </p>
+        
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-xl font-semibold text-brand-red mb-8"></div>
+
+        <!-- FFlags Output Area -->
+        <div id="fflags" class="hidden glass-output p-5 md:p-8 rounded-xl w-full max-h-[50vh] overflow-y-auto text-sm md:text-base font-mono leading-relaxed select-all">
+            <!-- FFlags will be inserted here -->
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-wrap justify-center gap-4 mt-8">
+            <button id="generateBtn" class="bg-brand-red/90 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-brand-red transition-all transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                <i class="fas fa-play"></i> Start Generating
+            </button>
+            <button id="copyBtn" style="display:none;" class="bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                <i class="fas fa-copy"></i> Copy FFlags
+            </button>
+            <button id="downloadBtn" style="display:none;" class="bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                <i class="fas fa-download"></i> Download as TXT
+            </button>
+            
+
+            <!-- Bug Report Section -->
+<div class="mt-12 text-center w-full">
+    <h2 class="text-lg font-semibold mb-3 text-gray-300">Found a bug? Report it to us!</h2>
+
+    <div class="flex flex-col items-center gap-3">
+        <div>
+            <label class="block text-sm mb-1 text-gray-400">Name:</label>
+            <input id="reportName" 
+                   type="text" 
+                   placeholder="Enter your name"
+                   class="px-3 py-2 rounded-lg bg-brand-dark border border-white/10 text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-red w-64">
+        </div>
+
+        <button id="reportBtn" 
+                class="bg-brand-red/90 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-brand-red transition-all transform hover:scale-[1.02] active:scale-95 flex it
+
+        </div>
+
+        <!-- Info Text -->
+        <div id="info-text" class="mt-8 text-gray-500 text-sm italic">
+            Send (Currently supports 400+ PVP FFLAGS)
+        </div>
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] space-y-2">
+        <!-- Toasts will appear here -->
+    </div>
+
+    <script>
+        // FFlags Data (Original data preserved)
+        const fflagsData = {
+            // --- INJECTED FFLAGS START ---
+            "FLogNetwork": "7",
+            "FIntTerrainArraySliceSize": "4",
+            "DFIntTaskSchedulerTargetFps": "9999",
+            "DFFlagDebugRenderForceTechnologyVoxel": "True",
+            "DFFlagDisableDPIScale": "True",
+            "DFIntCanHideGuiGroupId": "32380007",
+            "FFlagDebugForceFutureIsBrightPhase3": "True",
+            "DFIntTextureQualityOverride": "0",
+            "FFlagDebugGraphicsPreferD3D11FL10": "False",
+            "FFlagDisablePostFx": "True",
+            "FIntFontSizePadding": "3",
+            "FIntFullscreenTitleBarTriggerDelayMillis": "18000000",
+            "FIntRenderShadowIntensity": "0",
+            "DFFlagTextureQualityOverrideEnabled": "True",
+            "FFlagEnableInGameMenuChrome": "True",
+            "FIntDebugForceMSAASamples": "1",
+            "FFlagDebugGraphicsPreferD3D11": "True",
+            "FFlagDebugGraphicsPreferVulkan": "True",
+            "FFlagDebugGraphicsPreferOpenGL": "True",
+            "FFlagFixGraphicsQuality": "True",
+            "FFlagEnableV3MenuABTest3": "False",
+            "FFlagEnableInGameMenuModernization": "True",
+            "FFlagEnableInGameMenuChromeABTest3": "False",
+            "FFlagDisableNewIGMinDUA": "True",
+            "FFlagEnableInGameMenuControls": "True",
+            "FFlagEnableMenuControlsABTest": "False",
+            "FFlagGraphicsGLEnableSuperHQShadersExclusion": "False",
+            "FFlagTopBarUseNewBadge": "false",
+            "DFStringAltTelegrafHTTPTransportUrl": "http://opt-out.roblox.com",
+            "FFlagRenderDebugCheckThreading2": "True",
+            "FStringInGameMenuChromeForcedUserIds": "1353919681",
+            "DFIntHttpConnMaxAge": "600000",
+            "DFIntUserIdPlayerNameLifetimeSeconds": "86400",
+            "DFIntReportOutputDeviceInfoRateHundredthsPercentage": "0",
+            "DFIntServerConfigCloudEditSavePeriodSeconds": "240",
+            "FFlagLuaAppExitModal2": "False",
+            "FFlagEnableReportAbuseMenuLayerOnV3": "false",
+            "FIntUGCValidationLeftLegThresholdBack": "40",
+            "FFlagDebugDisableTelemetryV2Counter": "True",
+            "DFIntServerTickRate": "60",
+            "DFIntImmersiveAdBackendResponseEventThrottleHundrethsPercent": "10000",
+            "DFIntHttpInfluxHundredthsPercentage": "1",
+            "FStringNote": "CHANGE TO false IF YOU DONT WANNA HAVE GRAY SKYBOX",
+            "FFlagRenderGpuTextureCompressor": "True",
+            "FIntMeshContentProviderForceCacheSize": "268435456",
+            "FFlagAppBridgeRemoveIsSignalREnabled": "True",
+            "DFIntDebugFRMQualityLevelOverride": "1",
+            "FFlagControlBetaBadgeWithGuac": "false",
+            "DFIntHttpCurlConnectionCacheSize": "-1",
+            "DFFlagPhysicsAnalytics": "False",
+            "DFIntHumanoidMassScaleThresholdThou2": "1000",
+            "DFIntAnimationLodFacsVisibilityDenominator": "0",
+            "FFlagReconnectDisabled": "True",
+            "DFIntScriptVersionHistoryEventThrottleHundredthPercent": "10000",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL12": "2",
+            "DFIntServerMaxJoinsInBatch": "2",
+            "DFIntMaxProcessPacketsStepsPerCyclic": "3000",
+            "DFIntHttpServiceTlsProbeInfluxHundrethsPercentage": "1000",
+            "FIntLmsClientRollout2": "0",
+            "DFIntHttpParallelLimit_RequestContentProvider": "0",
+            "DFIntHungScriptPermyriad": "10000",
+            "FIntUGCValidationLeftArmThresholdSide": "40",
+            "DFStringAltHttpPointsReporterUrl": "null",
+            "DFIntSessionIdlePeriod": "600",
+            "FIntBootstrapperTelemetryReportingHundredthsPercentage": "0",
+            "DFStringTelemetryV2Url": "null",
+            "DFIntHttpServiceTransportFailureInfluxHundrethsPercentage": "10000",
+            "DFIntHttpServiceInsightsErrorStatusCodeThrottleHundredthsPercentage": "1",
+            "FFlagDebugDisableTelemetryEphemeralCounter": "True",
+            "DFIntHttpStatsErrorInfluxReportsPerMillion": "500",
+            "FFlagAccurateHitbox": "True",
+            "DFFlagQueueDataPingFromSendData": "True",
+            "FFlagUserPreventOldBubbleChatOverlap": "False",
+            "FIntRenderGrassDetailStrands": "0",
+            "DFIntServerReportRakNetBandwidthTelemetryHundredthsPercentage": "100",
+            "FIntTerrainOTAMaxTextureSize": "1024",
+            "DFFlagEnableGCapsHardwareTelemetry": "False",
+            "FFlagGpuGeometryManager7": "True",
+            "DFStringAnalyticsEventStreamUrlEndpoint": "opt-out",
+            "FIntFRMMaxGrassDistance": "0",
+            "DFIntSignalRCoreHubConnectionDisconnectInfoHundredthsPercent": "500",
+            "FFlagFastHitDetection": "True",
+            "DFStringCrashUploadToBacktraceMacPlayerToken": "null",
+            "DFStringTelegrafHTTPTransportUrl": "http://opt-out.roblox.com",
+            "DFFlagAudioDeviceTelemetry": "False",
+            "DFIntConnectionMTUSize": "900",
+            "FFlagEnableBubbleChatFromChatService": "False",
+            "DFFlagEnableLightstepReporting2": "False",
+            "DFIntServerFramesBetweenJoins": "2",
+            "FFlagEnableMenuModernizationABTest2": "False",
+            "DFIntRaknetBandwidthInfluxHundredthsPercentageV2": "0600",
+            "DFIntSendReplicatorStatsFacsOverrideES": "500",
+            "DFFlagAutoReconnectTeleport": "True",
+            "DFIntGoogleAnalyticsLoadPlayerHundredth": "0",
+            "FIntUGCValidationTorsoThresholdSide": "200",
+            "FFlagDontCreatePingJob": "True",
+            "FIntUGCValidationTorsoThresholdBack": "200",
+            "FFlagEnableSoundTelemetry": "False",
+            "DFFlagEnableHardwareTelemetry": "False",
+            "FFlagEnableNewInviteMenuIXP2": "False",
+            "FFlagLuaAppSystemBar": "False",
+            "DFIntRakNetClockDriftAdjustmentPerPingMillisecond": "100",
+            "DFIntRakNetResendMinThresholdTimeInUs": "1",
+            "FIntRobloxGuiBlurIntensity": "0",
+            "FStringErrorUploadToBacktraceBaseUrl": "http://opt-out.roblox.com",
+            "DFFlagPhysicsReportWorldTime1": "False",
+            "DFFlagPhysicsReportInterpolatedTime": "False",
+            "FFlagLuaAppExitModalDoNotShow": "True",
+            "DFIntPerformanceControlTextureQualityBestUtility": "-1",
+            "DFIntHttpClientExternalTlsPeerVerificationFailHundrethsPercentage": "10000",
+            "DFIntServerJoinRejectCountHundredthPercentageSent": "500",
+            "FIntHSRClusterSymmetryDistancePercent": "10000",
+            "DFIntImmersiveAdBackendRequestEventThrottleHundrethsPercent": "10000",
+            "DFIntSendJoinTimeDeltasToDiag_HundredthsPercentage": "100",
+            "FIntUGCValidationRightLegThresholdBack": "80",
+            "DFFlagRemoveHumanoidActivePhysics": "False",
+            "FStringWhitelistVerifiedUserId": "411955176",
+            "DFIntSendHttpRbxApiStatsToDiag_HundredthsPercentage": "1000",
+            "DFIntSessionReportCrashErrorEventIngestThrottleHundredthsPercent": "10000",
+            "DFFlagAUMPAnalytics": "True",
+            "DFIntImmersiveAdDataMismatchEventThrottleHundrethsPercent": "10000",
+            "DFIntHttpDownloadBandwidthInfluxHundredthsPercentage": "500",
+            "FFlagHumanoidParallelFasterWakeUp": "True",
+            "DFIntHttpInfluxReportsPerMillion": "100",
+            "FFlagCommitToGraphicsQualityFix": "True",
+            "DFIntSendRakNetStatsInterval": "300",
+            "DFFlagMaxPhysicsPacketCounter": "True",
+            "FFlagHumanoidParallelFasterSetCollision": "True",
+            "FFlagHumanoidOnlySetCollisionsOnStateChangeDefaultIsEnabled": "False",
+            "DFFlagGpuVsCpuBoundTelemetry": "False",
+            "DFIntHumanoidSimWorldReportPercentageHundredths": "1",
+            "FIntUGCValidationRightArmThresholdSide": "80",
+            "DFIntHttpCurlMaxConnectionsPerHost": "4",
+            "DFIntCodecMaxIncomingPackets": "100",
+            "FFlagPreloadTextureItemsOption4": "True",
+            "DFStringRobloxAnalyticsURL": "null",
+            "DFStringLightstepHTTPTransportUrlPath": "null",
+            "DFFlagPhysicsBatchHotrodAccessorMigration2": "False",
+            "FStringCredit": "Potato Mode | @KiwisASkid on YT",
+            "FIntTaskSchedulerThreadMin": "3",
+            "FIntRuntimeMaxNumOfThreads": "2400",
+            "DFIntHumanoidNetworkOwnershipChangePointsThrottleHundrethsPercent": "1",
+            "FFlagOptimizeServerTickRate": "True",
+            "DFIntRakNetMtuValue1InBytes": "1280",
+            "DFIntSendGameServerDataMaxLen": "8092",
+            "FIntUGCValidationRightArmThresholdBack": "46",
+            "FFlagEnhanceHitdetection": "True",
+            "FFlagInGameMenuV1FullScreenTitleBar": "False",
+            "DFIntAnimationLodFacsDistanceMax": "0",
+            "FFlagEnableFavoriteButtonForUgc": "true",
+            "DFIntSessionReportAppSuccessEventIngestThrottleHundredthsPercent": "10000",
+            "DFStringLightstepHTTPTransportUrlHost": "null",
+            "DFIntRaknetBandwidthPingSendEveryXSeconds": "1",
+            "DFIntMaxFrameBufferSize": "4",
+            "DFIntOptimizePingThreshold": "50",
+            "DFIntRakNetResendMaxThresholdTimeInUs": "1",
+            "DFIntSecretsStoreFetchTimeoutMs": "4000",
+            "FFlagOptimizeHitreg": "True",
+            "DFIntClientLightingTechnologyChangedTelemetryHundredthsPercent": "0",
+            "DFFlagPhysicsForAllGamesAnalyticsRefactor": "True",
+            "DFIntTextureCompositorActiveJobs": "0",
+            "FStringTopBarBadgeLearnMoreLink": "https://youtube.com/@KiwisASkid/",
+            "FIntUGCValidationRightArmThresholdFront": "50",
+            "DFIntHttpConnectDefaultTimeoutMillis": "60000",
+            "FIntReportDeviceInfoRollout": "0",
+            "DFIntSendRakNetStatsThrottle": "2",
+            "DFIntHttpServiceInsightsCounterThrottleHundredthsPercentage": "1",
+            "DFIntRakNetNakResendDelayMs": "10",
+            "FFlagDebugDisableTelemetryV2Stat": "True",
+            "DFIntRenderingThrottleDelayInMS": "1",
+            "DFIntHttpServiceRequestTimeReportThrottleHundredthsPercentage": "1",
+            "FFlagBetaBadgeLearnMoreLinkFormview": "false",
+            "FIntDefaultMeshCacheSizeMB": "256",
+            "DFIntHttpChatThrottleHundredthsPercentage": "1",
+            "FFlagAnimationClipMemCacheEnabled": "True",
+            "DFIntSessionReportSuccessThrottleHundredthsPercent": "100",
+            "FFlagVoiceBetaBadge": "false",
+            "FFlagDebugSkyGray": "True",
+            "DFIntSessionTelemetryOSWarningMinimum": "10",
+            "DFIntHttpServiceBandwidthReportThrottleHundredthsPercentage": "1",
+            "DFIntHttpStatsDnsErrorInfluxReportsPerMillion": "1000",
+            "DFFlagPhysicsReceiveReportPerfData2": "False",
+            "DFIntIkControlTelemetryEventsThrottleHundrethsPercent": "10000",
+            "FFlagEnableChromePinnedChat": "True",
+            "FFlagAutoNetworkOwnershipUsesNOUs": "True",
+            "FFlagEnableInGameMenuV3": "True",
+            "DFIntWaitOnRecvFromLoopEndedMS": "100",
+            "DFStringHttpPointsReporterUrl": "null",
+            "FFlagFastGPULightCulling3": "True",
+            "DFIntHttpExponetialRetryBaseInterval": "3",
+            "FFlagEnableAccessibilitySettingsEffectsInExperienceChat": "True",
+            "DFIntImmersiveAdDeveloperFallbackImageUsedEventThrottleHundrethsPercent": "50",
+            "DFIntIgnoreCustomEventReceiverSourceReportPermyriad2": "100",
+            "DFIntSendVerFSS": "1",
+            "DFIntHumanoidNetworkOwnershipChangeEventIngestThrottleHundrethsPercent": "1",
+            "FFlagDebugDisableTelemetryEphemeralStat": "True",
+            "DFIntSessionPauseStatsInfluxHundredthsPercentage": "100",
+            "DFIntServerBandwidthPlayerSampleRate": "20",
+            "FFlagDebugDisableTelemetryEventIngest": "True",
+            "FFlagEnableQuickGameLaunch": "False",
+            "FFlagMSRefactor5": "False",
+            "DFFlagDebugPerfMode": "False",
+            "FStringTerrainMaterialTablePre2022": "",
+            "DFIntSessionReportSuccessEventIngestThrottleHundredthsPercent": "10000",
+            "DFIntRakNetNakResendDelayRttPercent": "50",
+            "DFStringRobloxAnalyticsSubDomain": "opt-out",
+            "DFIntHttpServiceAggregateBandwidthReportThrottleHundredthsPercentage": "1",
+            "DFFlagEnableFmodErrorsTelemetry": "False",
+            "DFFlagAUMProperty": "False",
+            "FFlagChatTranslationSettingEnabled3": "false",
+            "FIntFRMMinGrassDistance": "0",
+            "DFIntHttpRbxApiMaxRetryCount": "3",
+            "FFlagTrackerLodControllerDebugUI": "True",
+            "DFIntServerStatsWithFacsReportingPerHundPercent": "2000",
+            "FFlagAppBridgeRewrite": "True",
+            "DFIntRuntimeConcurrency": "50",
+            "DFIntScriptErrorThrottleHundredthsPercent": "10000",
+            "DFIntScriptEditorMultiCursorEventThrottleHundredthPercent": "10000",
+            "DFIntImmersiveAdImpressionEventPointsThrottleHundrethsPercent": "5000",
+            "FFlagDynamicHitbox": "True",
+            "FFlagPreloadAllFonts": "True",
+            "FIntUGCValidationLeftArmThresholdBack": "23",
+            "DFIntLightstepHTTPTransportHundredthsPercent2": "0",
+            "FFlagSmoothHitreg": "True",
+            "FIntUGCValidationLeftArmThresholdFront": "27",
+            "FFlagLowpingHitreg": "True",
+            "FFlagClientSendAvoidPlayerOnFireServer": "True",
+            "FIntRakNetDatagramMessageIdArrayLength": "1024",
+            "FIntRenderGrassHeightScaler": "0",
+            "DFIntRakNetMtuValue3InBytes": "1200",
+            "FIntUGCValidationTorsoThresholdFront": "200",
+            "DFIntServerStatsReportingPerHundPercent": "50",
+            "DFFlagDebugAnalyticsSendUserId": "False",
+            "FFlagAdServiceEnabled": "False",
+            "FIntRakNetResendBufferArrayLength": "128",
+            "DFFlagBatchAssetApiNoFallbackOnFail": "False",
+            "DFIntCodecMaxOutgoingFrames": "10000",
+            "FFlagBatchAssetApi": "True",
+            "DFStringCrashUploadToBacktraceBaseUrl": "null",
+            "FIntCameraMaxZoomDistance": "99999",
+            "DFIntSendJoinHttpBytesToDiag_HundredthsPercentage": "100",
+            "DFIntMaxProcessPacketsStepsAccumulated": "0",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL34": "4",
+            "DFIntHardwareTelemetryHundredthsPercent": "0",
+            "FIntEmotesAnimationsPerPlayerCacheSize": "16777216",
+            "DFIntHumanoidMassScaleThresholdThou": "1000",
+            "FFlagClientUseMixedPriority": "True",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL23": "3",
+            "DFIntImmersiveAdBackendErrorEventThrottleHundrethsPercent": "10000",
+            "DFIntSendConnectionAttemptCount": "24",
+            "FIntDebugForceSwordHandlerSIZE": "7000000",
+            "FIntRenderLocalLightUpdatesMax": "1",
+            "FIntRenderLocalLightUpdatesMin": "1",
+            "FStringPerformanceSendMeasurementAPISubdomain": "opt-out",
+            "FFlagHighPrecisionHitBox": "True",
+            "DFIntLargePacketQueueSizeCutoffMB": "1000",
+            "FIntUGCValidationLeftLegThresholdFront": "40",
+            "DFIntRakNetNakResendDelayMsMax": "100",
+            "FFlagNewLightAttenuation": "True",
+            "DFIntUserIdPlayerNameCacheSize": "33554432",
+            "DFIntCSGLevelOfDetailSwitchingDistance": "1",
+            "FFlagLowLatencyHitreg": "True",
+            "FFlagDebugCheckRenderThreading": "True",
+            "FFlagDebugRenderingSetDeterministic": "True",
+            "DFIntHumanoidStateChangeEventIngestThrottleHundrethsPercent": "1",
+            "FFlagNullCheckCloudsRendering": "True",
+            "DFFlagRakNetUseSlidingWindow4": "True",
+            "FFlagPreloadMinimalFonts": "True",
+            "FIntUITextureMaxRenderTextureSize": "1024",
+            "DFIntRakNetMtuValue2InBytes": "1240",
+            "DFFlagSimReportCPUInfo": "False",
+            "DFIntSendAvatarLoadTimeStats_HundredthsPercentage": "0",
+            "FFlagEnableAccessibilitySettingsInExperienceMenu2": "True",
+            "DFFlagBrowserTrackerIdTelemetryEnabled": "False",
+            "DFIntRakNetLoopMs": "1",
+            "DFIntHttpRbxApiMaxRetryBudgetPerMinute": "10",
+            "DFStringCrashUploadToBacktraceWindowsPlayerToken": "null",
+            "FFlagEnableAccessibilitySettingsAPIV2": "True",
+            "DFIntHttpMaxRetries": "1",
+            "FFlagEnableAccessibilitySettingsEffectsInCoreScripts2": "True",
+            "DFFlagESGamePerfMonitorEnabled": "False",
+            "FFlagAppBridgeExplicitDefaultPlayerParams": "False",
+            "DFIntAnimationLodFacsDistanceMin": "0",
+            "FFlagDebugLightGridShowChunks": "False",
+            "DFFlagDisableFastLogTelemetry": "True",
+            "FFlagDebugDisableTelemetryPoint": "True",
+            "DFIntHttpSendStatsEveryXSeconds": "300",
+            "FFlagGameBasicSettingsFramerateCap5": "True",
+            "FFlagDebugGraphicsDisableMetal": "true",
+            "FStringPartTexturePackTable2022": "{\u0022foil\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[238,238,238,255]},\u0022asphalt\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[227,227,228,234]},\u0022basalt\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[160,160,158,238]},\u0022brick\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[229,214,205,227]},\u0022cobblestone\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[218,219,219,243]},\u0022concrete\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[225,225,224,255]},\u0022crackedlava\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[76,79,81,156]},\u0022diamondplate\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[210,210,210,255]},\u0022fabric\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[221,221,221,255]},\u0022glacier\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[225,229,229,248]},\u0022glass\u0022:{\u0022ids\u0022:[\u0022rbxassetid://9873284556\u0022,\u0022rbxassetid://9438453972\u0022],\u0022color\u0022:[254,254,254,7]},\u0022granite\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[210,206,200,255]},\u0022grass\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[196,196,189,241]},\u0022ground\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[165,165,160,240]},\u0022ice\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[235,239,241,248]},\u0022leafygrass\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[182,178,175,234]},\u0022limestone\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[250,248,243,250]},\u0022marble\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[181,183,193,249]},\u0022metal\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[226,226,226,255]},\u0022mud\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[193,192,193,252]},\u0022pavement\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[218,218,219,236]},\u0022pebble\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[204,203,201,234]},\u0022plastic\u0022:{\u0022ids\u0022:[\u0022\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[255,255,255,255]},\u0022rock\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[211,211,210,248]},\u0022corrodedmetal\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[206,177,163,180]},\u0022salt\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[249,249,249,255]},\u0022sand\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[218,216,210,240]},\u0022sandstone\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[241,234,230,246]},\u0022slate\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[235,234,235,254]},\u0022snow\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[239,240,240,255]},\u0022wood\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[217,209,208,255]},\u0022woodplanks\u0022:{\u0022ids\u0022:[\u0022rbxassetid://0\u0022,\u0022rbxassetid://0\u0022],\u0022color\u0022:[207,208,206,254]}}",
+            "FStringCoreScriptBacktraceErrorUploadToken": "null",
+            "FFlagGraphicsSettingsOnlyShowValidModes": "True",
+            "FFlagDebugDisableTelemetryV2Event": "True",
+            "DFIntMegaReplicatorNetworkQualityProcessorUnit": "10",
+            "FFlagTaskSchedulerLimitTargetFpsTo2402": "False",
+            "FIntUGCValidationRightLegThresholdSide": "76",
+            "DFStringLightstepToken": "null",
+            "FStringVoiceBetaBadgeLearnMoreLink": "null",
+            "DFIntMaxProcessPacketsJobScaling": "5000",
+            "FIntRenderShadowmapBias": "0",
+            "FIntUGCValidationRightLegThresholdFront": "80",
+            "DFIntRakNetResendRttMultiple": "1",
+            "DFIntSetBinaryStringCSGDataHundredthsPercent": "500",
+            "DFIntRaknetDeferredQueue": "10",
+            "DFIntReportRecordingDeviceInfoRateHundredthsPercentage": "0",
+            "DFIntWaitOnUpdateNetworkLoopEndedMS": "100",
+            "FIntUGCValidationLeftLegThresholdSide": "36",
+            "FStringTerrainMaterialTable2022": "",
+            "DFFlagDebugPauseVoxelizer": "True",
+            "DFIntSimACPDynamicAssemblyVolumeCapReportThresholdHundredthPercentage": "0",
+            "DFIntSimAdaptiveHumanoidPDControllerSubstepMultiplier": "1",
+            "DFIntSimAnimationConstraintResponsiveness": "100",
+            "DFIntSimArbiterPositionCorrectionFactorThresholdThou": "300",
+            "DFIntSimBroadPhaseMaxTotalPairCount": "1000000",
+            "DFIntSimConstraintDataCollectionRate2": "10",
+            "DFIntSimConstraintDataCollectionRate3": "1000",
+            "FFlagCOLLAB2194ConnectionMonitor": "True",
+            "FFlagCOLLAB2194NewConnectionIndicator": "True",
+            "FFlagCOLLAB2602ReportNonLostConnectionDisconnects": "True",
+            "FFlagBufferReplication": "True",
+            "FFlagBufferReplicationUc": "True" // Cleaned up the incomplete line and ensured valid JavaScript object syntax.
+            // --- INJECTED FFLAGS END ---
+        };
+
+        // Format all FFlags into key-value strings for display
+        const allFflags = Object.entries(fflagsData).map(([key, value]) => `"${key}": ${JSON.stringify(value)}`);
+
+        // DOM Elements
+        const generateBtn = document.getElementById('generateBtn');
+        const loadingEl = document.getElementById('loading');
+        const fflagsEl = document.getElementById('fflags');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const toastContainer = document.getElementById('toast-container');
+
+        // --- Utility Functions ---
+
+        /**
+         * Replaces alert() with a custom toast notification.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', or 'info'.
+         */
+        function showToast(message, type = 'info') {
+            const colors = {
+                'success': { bg: 'bg-green-600', icon: 'fas fa-check-circle' },
+                'error': { bg: 'bg-red-600', icon: 'fas fa-times-circle' },
+                'info': { bg: 'bg-blue-600', icon: 'fas fa-info-circle' },
+            };
+            const style = colors[type] || colors['info'];
+
+            const toast = document.createElement('div');
+            toast.className = `${style.bg} text-white px-4 py-3 rounded-xl shadow-2xl transition-opacity duration-300 transform translate-x-full opacity-0 flex items-center gap-3 max-w-xs md:max-w-md`;
+            toast.innerHTML = `<i class="${style.icon}"></i> ${message}`;
+
+            toastContainer.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                toast.classList.add('translate-x-0', 'opacity-100');
+            }, 10);
+
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.remove('translate-x-0', 'opacity-100');
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        /**
+         * Picks N unique random elements from an array.
+         */
+        function pickUniqueFflags(array, n) {
+            const copy = [...array];
+            const selected = [];
+            // Use all available FFlags if the request is larger than the list size
+            n = Math.min(n, copy.length); 
+            for (let i = 0; i < n; i++) {
+                const index = Math.floor(Math.random() * copy.length);
+                selected.push(copy[index]);
+                copy.splice(index, 1);
+            }
+            return selected;
+        }
+
+        // --- Core Logic ---
+
+        function generateFFlags() {
+            // Disable and show loading state
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Generating...`;
+            
+            // Hide previous results and buttons
+            fflagsEl.style.display = "none";
+            copyBtn.style.display = "none";
+            downloadBtn.style.display = "none";
+            
+            loadingEl.textContent = "Starting FFlags Generation...";
+
+            // Original random time simulation
+            const totalTime = Math.floor(Math.random() * 10 + 1) * 1000;
+            const phaseTime = totalTime / 3;
+
+            // Phase 1
+            setTimeout(() => {
+                loadingEl.textContent = "Optimizing parameters...";
+                // Phase 2
+                setTimeout(() => {
+                    loadingEl.textContent = "Compiling configurations...";
+                    // Phase 3 (Completion)
+                    setTimeout(() => {
+                        // Generate 50 FFlags from the full list
+                        const selected = pickUniqueFflags(allFflags, 50); 
+                        fflagsEl.style.display = "block";
+                        // Wrap the output in a JSON object structure for better compatibility
+                        fflagsEl.textContent = `{\n${selected.join(',\n')}\n}`; 
+                        
+                        loadingEl.textContent = "FFLAGS GENERATED SUCCESSFULLY!";
+                        showToast(`FFlags generated! Total: ${selected.length}`, 'success');
+                        
+                        // Re-enable and update button text
+                        generateBtn.disabled = false;
+                        generateBtn.innerHTML = `<i class="fas fa-redo"></i> Generate More`;
+                        
+                        copyBtn.style.display = "inline-flex";
+                        downloadBtn.style.display = "inline-flex";
+                    }, phaseTime);
+                }, phaseTime);
+            }, phaseTime);
+        }
+
+        // --- Event Listeners ---
+
+        generateBtn.addEventListener('click', generateFFlags);
+
+
+        // --- Bug Report System ---
+
+const reportBtn = document.getElementById("reportBtn");
+const reportName = document.getElementById("reportName");
+
+// ⚠️ Replace this with your webhook
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1443689513292664912/apOU-3MRRtM_1J3Fnlh7Vng8Sy-0r1KY93E6WlP18yfu2XvPEFjIDSjQztLKt5rE-loC";
+
+reportBtn.addEventListener("click", async () => {
+    const name = reportName.value.trim();
+
+    if (!name) {
+        showToast("Please enter your name before reporting.", "error");
+        return;
+    }
+
+    const message = prompt("Describe the bug you found:");
+
+    if (!message) return;
+
+    const payload = {
+        embeds: [
+            {
+                title: "🐞 New Bug Report",
+                color: 15158332,
+                fields: [
+                    { name: "Reporter", value: name, inline: true },
+                    { name: "Bug Description", value: message }
+                ],
+                timestamp: new Date().toISOString()
+            }
+        ]
+    };
+
+    try {
+        await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        showToast("Bug report sent successfully!", "success");
+    } catch (err) {
+        console.error(err);
+        showToast("Failed to send bug report.", "error");
+    }
+});
+
+
+        copyBtn.addEventListener('click', () => {
+            const textToCopy = fflagsEl.textContent;
+            
+            // Temporary element for copying
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = textToCopy;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            
+            try {
+                // Use execCommand as a reliable fallback in iframes
+                document.execCommand('copy'); 
+                showToast('FFlags copied to clipboard!', 'success');
+            } catch (err) {
+                showToast('Failed to copy FFlags. Please copy manually.', 'error');
+            }
+            
+            document.body.removeChild(tempTextarea);
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            // Download as .json since the content is wrapped in curly braces {} now
+            const blob = new Blob([fflagsEl.textContent], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "pvp_fflags.json"; 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('FFlags downloaded as pvp_fflags.json!', 'info');
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPS FFLAGS GENERATOR</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#FF3B3B',
+                            dark: '#0f0f0f',
+                            surface: '#1a1a1a',
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 1.5s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styles for background and glass effect */
+        body {
+            background: #1a1a1a;
+            background-image: radial-gradient(circle at center, rgba(255,255,255,0.05), rgba(30,30,30,1) 60%, rgba(20,20,20,1) 100%);
+            min-height: 100vh;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .glass-output {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            white-space: pre-wrap; /* Preserve line breaks */
+        }
+
+        /* Loading spinner animation */
+        .loading-spinner {
+            border-top-color: transparent;
+            border-right-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-gray-200 font-sans flex flex-col items-center p-8">
+
+    <!-- Floating Badge -->
+    <div class="fixed top-6 right-6 z-50">
+        <span class="bg-brand-red/90 text-white px-3 py-1 rounded text-xs font-bold tracking-widest shadow-[0_0_15px_rgba(255,59,59,0.6)] border border-red-400/50 backdrop-blur-sm">
+            BETA v2.0
+        </span>
+    </div>
+
+    <main class="w-full max-w-4xl flex flex-col items-center">
+        
+        <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight text-glow uppercase italic text-center">
+            FPS <span class="text-brand-red">FFLAGS</span> GENERATOR
+        </h1>
+
+        <p class="text-gray-400 text-sm mb-10 italic">
+            Note: Generating takes between 1-10 seconds depending on the machine. (It's random basically)
+        </p>
+        
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-xl font-semibold text-brand-red mb-8"></div>
+
+        <!-- FFlags Output Area -->
+        <div id="fflags" class="hidden glass-output p-5 md:p-8 rounded-xl w-full max-h-[50vh] overflow-y-auto text-sm md:text-base font-mono leading-relaxed select-all">
+            <!-- FFlags will be inserted here -->
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-wrap justify-center gap-4 mt-8">
+            <button id="generateBtn" class="bg-brand-red/90 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-brand-red transition-all transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                <i class="fas fa-play"></i> Start Generating
+            </button>
+            <button id="copyBtn" style="display:none;" class="bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                <i class="fas fa-copy"></i> Copy FFlags
+            </button>
+            <button id="downloadBtn" style="display:none;" class="bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                <i class="fas fa-download"></i> Download as TXT
+            </button>
+        </div>
+
+        <!-- Info Text -->
+        <div id="info-text" class="mt-8 text-gray-500 text-sm italic">
+            Currently supports 500+ FFLAGS
+        </div>
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] space-y-2">
+        <!-- Toasts will appear here -->
+    </div>
+
+    <script>
+        // FFlags Data (Original data preserved)
+        const fflagsData = {
+            "FLogNetwork": "7",
+            "FFlagAnimationClipMemCacheEnabled": "True",
+            "DFIntLightstepHTTPTransportHundredthsPercent2": "0",
+            "DFFlagDebugAnalyticsSendUserId": "False",
+            "FFlagFixGraphicsQuality": "True",
+            "FFlagDontCreatePingJob": "True",
+            "FFlagLuaAppSystemBar": "False",
+            "FFlagAdServiceEnabled": "False",
+            "DFFlagBatchAssetApiNoFallbackOnFail": "False",
+            "FIntRakNetDatagramMessageIdArrayLength": "1024",
+            "DFIntPlayerNetworkUpdateRate": "60",
+            "FFlagAdServiceEnabled": "False",
+            "FFlagDebugDisableTelemetryEphemeralCounter": "True",
+            "FIntDebugForceMSAASamples": "1",
+            "DFStringLightstepToken": "null",
+            "FFlagDebugForceFutureIsBrightPhase3": "True",
+            "FFlagDebugGraphicsPreferD3D11FL10": "False",
+            "DFStringRobloxAnalyticsURL": "null",
+            "FFlagFixGraphicsQuality": "True",
+            "DFIntRaknetBandwidthInfluxHundredthsPercentageV2": "10000",
+            "DFFlagDebugPerfMode": "False",
+            "FStringCoreScriptBacktraceErrorUploadToken": "null",
+            "DFIntDebugFRMQualityLevelOverride": "1",
+            "FFlagDebugDisableTelemetryEventIngest": "True",
+            "DFStringCrashUploadToBacktraceBaseUrl": "null",
+            "FFlagEnableV3MenuABTest3": "False",
+            "FIntRuntimeMaxNumOfThreads": "2400",
+            "FFlagDebugDisableTelemetryPoint": "True",
+            "DFIntCodecMaxIncomingPackets": "100",
+            "FFlagPreloadAllFonts": "False",
+            "FFlagFastGPULightCulling3": "True",
+            "DFStringTelemetryV2Url": "null",
+            "DFIntPerformanceControlTextureQualityBestUtility": "-1",
+            "FFlagDisablePostFx": "True",
+            "DFIntRakNetResendRttMultiple": "1",
+            "FFlagDisableNewIGMinDUA": "True",
+            "DFFlagDebugPauseVoxelizer": "True",
+            "FFlagDebugCheckRenderThreading": "True",
+            "FFlagDebugDisableTelemetryV2Event": "True",
+            "DFIntRenderingThrottleDelayInMS": "1",
+            "FFlagDebugDisableTelemetryV2Counter": "True",
+            "DFStringCrashUploadToBacktraceMacPlayerToken": "null",
+            "FFlagDebugGraphicsPreferD3D11": "True",
+            "DFStringAltHttpPointsReporterUrl": "null",
+            "DFIntConnectionMTUSize": "1200",
+            "FFlagDebugGraphicsPreferOpenGL": "True",
+            "FFlagEnableInGameMenuChrome": "True",
+            "DFIntWaitOnRecvFromLoopEndedMS": "100",
+            "FFlagDebugDisableTelemetryEphemeralStat": "True",
+            "FFlagDebugSkyGray": "True",
+            "DFFlagDisableDPIScale": "True",
+            "DFIntCodecMaxOutgoingFrames": "10000",
+            "DFIntRaknetBandwidthPingSendEveryXSeconds": "1",
+            "FFlagDebugRenderingSetDeterministic": "True",
+            "FFlagDebugDisableTelemetryV2Stat": "True",
+            "DFFlagTextureQualityOverrideEnabled": "True",
+            "DFIntWaitOnUpdateNetworkLoopEndedMS": "100",
+            "FFlagDebugGraphicsPreferVulkan": "True",
+            "DFIntRakNetClockDriftAdjustmentPerPingMillisecond": "100",
+            "DFFlagDebugRenderForceTechnologyVoxel": "True",
+            "DFIntCSGLevelOfDetailSwitchingDistance": "0",
+            "FFlagEnableInGameMenuChromeABTest3": "False",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL34": "0",
+            "DFIntTextureQualityOverride": "0",
+            "DFStringLightstepHTTPTransportUrlHost": "null",
+            "FIntRenderShadowIntensity": "0",
+            "DFIntRakNetLoopMs": "1",
+            "FFlagEnableMenuControlsABTest": "False",
+            "FIntFullscreenTitleBarTriggerDelayMillis": "18000000",
+            "DFStringLightstepHTTPTransportUrlPath": "null",
+            "FFlagEnableInGameMenuModernization": "True",
+            "DFIntMaxProcessPacketsJobScaling": "10000",
+            "DFIntTaskSchedulerTargetFps": "69420",
+            "FIntTerrainArraySliceSize": "0",
+            "DFIntTextureCompositorActiveJobs": "0",
+            "DFIntMegaReplicatorNetworkQualityProcessorUnit": "10",
+            "DFStringHttpPointsReporterUrl": "null",
+            "FFlagEnableInGameMenuControls": "True",
+            "DFIntClientLightingTechnologyChangedTelemetryHundredthsPercent": "0",
+            "DFIntMaxProcessPacketsStepsPerCyclic": "5000",
+            "FFlagRenderDebugCheckThreading2": "True",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL23": "0",
+            "DFIntLargePacketQueueSizeCutoffMB": "1000",
+            "DFFlagDisableFastLogTelemetry": "True",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL12": "0",
+            "DFIntMaxProcessPacketsStepsAccumulated": "0",
+            "FFlagNewLightAttenuation": "True",
+            "FFlagGameBasicSettingsFramerateCap5": "True",
+            "FIntTaskSchedulerThreadMin": "3",
+            "FFlagTaskSchedulerLimitTargetFpsTo2402": "False",
+            "DFFlagBrowserTrackerIdTelemetryEnabled": "False",
+            "FLogNetwork": "7",
+            "FFlagHandleAltEnterFullscreenManually": "False",
+            "DFIntMaxAverageFrameDelayExceedFactor": "0",
+            "DFIntCSGLevelOfDetailSwitchingDistance": "1",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL12": "1",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL23": "1",
+            "DFIntCSGLevelOfDetailSwitchingDistanceL34": "1",
+            "DFIntSimArbiterCFLLengthScaleThou": "2147483647",
+            "DFIntAnimationLodFacsVisibilityDenominator": "2",
+            "DFIntPerformanceControlFrameTimeMaxUtility": "-1",
+            "DFIntTimestepArbiterThresholdCFLThou": "300",
+            "DFIntMemoryUtilityCurveBaseHundrethsPercent": "2500",
+            "DFIntGraphicsOptimizationModeMaxFrameTimeTargetMs": "25",
+            "DFIntGraphicsOptimizationModeMinFrameTimeTargetMs": "20",
+            "DFFlagDebugPauseVoxelizer": "True",
+            "DFFlagDebugExtendFramerateWidget": "True",
+            "DFFlagDebugRenderForceTechnologyVoxel": "True",
+            "DFFlagDebugOverrideProfileFrameTimeNow": "True",
+            "DFFlagDebugPerformanceControlEnableFrameTimeOverrideImGui": "True",
+            "FIntContentProviderPreloadHangHashRepeatCount": "2147483647",
+            "FFlagDebugDontLoadServerCoreScriptsForLuaAppInAPS": "True",
+            "FIntAssetPreloadingParallelRequestsCount": "2147483647",
+            "FFlagRemovedRbxRenderingPreProcessor": "True",
+            "DFFlagReportPlayerLoadTimeEvents4": "True",
+            "DFFlagEnablePreloadAvatarAssets": "True",
+            "DFFlagEnableTexturePreloading": "True",
+            "DFFlagEnableSoundPreloading": "True",
+            "DFFlagEnableMeshPreloading": "True",
+            "FFlagAssetPreloadingIXP": "True",
+            "FFlagFixMeshLoadingHang": "True",
+            "DFIntInterpolationNumParallelTasks": "4",
+            "FLogGameJoinLoadTime": "1",
+            "DFLogCharacterLoadTime": "1",
+            "DFIntPreloadTextureTimeBuget": "1",
+            "FStringGetPlayerImageDefaultTimeout": "1",
+            "DFIntPlayerLoadTimeEventsThrottleHundredthsPercent": "1",
+            "FFlagJoinTimeIXP2": "True",
+            "DFFlagDebugForceAnisoOff": "True",
+            "DFIntPerformanceControlFrameTimeMax": "1",
+            "DFIntMemoryUtilityCurveNumSegments": "0",
+            "DFIntDebugFRMQualityLevelOverride": "1",
+            "DFIntAnimationLodFacsDistanceMin": "10",
+            "DFIntAnimationLodFacsDistanceMax": "50",
+            "DFIntTaskSchedulerTargetFps": "34347743",
+            "DFIntDebugRestrictGCDistance": "1",
+            "DFIntMaxFrameBufferSize": "10",
+            "FFlagChatTranslationEnableSystemMessage": "False",
+            "FFlagTaskSchedulerLimitTargetFpsTo2402": "false",
+            "FFlagEnableHarmonyOnFrameRateManager4": "True",
+            "FFlagEnableTFFeedbackModeEntryCheck": "False",
+            "FFlagDisableFeedbackSoothsayerCheck": "False",
+            "FFlagChatTranslationSettingEnabled3": "False",
+            "FFlagAppChatRebrandIconUpdates": "False",
+            "FFlagOptimizeCFrameUpdatesIC4": "True",
+            "FFlagOptimizeCFrameUpdates4": "True",
+            "FFlagAlwaysShowVRToggleV3": "False",
+            "FFlagAdServiceEnabled": "False",
+            "FFlagDisablePostFx": "True",
+            "FIntV1MenuLanguageSelectionFeaturePerMillageRollout": "0",
+            "FIntFullscreenTitleBarTriggerDelayMillis": "3600000",
+            "FIntInterpolationAwareTargetTimeLerpHundredth": "100",
+            "FIntCoordinatorMemoryPrioritizationFrequencyHz": "0",
+            "FIntCoordinatorPlannerStepsPerIteration": "0",
+            "FIntMaquettesFrameRateBufferPercentage": "0",
+            "FIntRomarkStartWithGraphicQualityLevel": "10",
+            "FIntSimWorldTaskQueueParallelTasks": "4",
+            "FIntRenderNodeEnterSleepingFrames": "0",
+            "FIntRenderGrassDetailStrands": "0",
+            "FIntDebugForceMSAASamples": "1",
+            "FIntRenderShadowIntensity": "0",
+            "FIntFRMMaxGrassDistance": "0",
+            "FIntFRMMinGrassDistance": "0",
+            "FFlagRenderEnableGlobalInstancingD3D11": "True",
+            "FFlagDebugGraphicsPreferD3D11": "True",
+            "FFlagGraphicsD3D11ExtraInitLog": "False",
+            "FFlagDisableHQShadersLowEndDx11": "True",
+            "FStringGraphicsDisableUnalignedDxtGPUNameBlacklist": "NVIDIA GeForce GT 1030",
+            "FIntRenderDx11LowEndCoreCount": "4",
+            "DFIntRuntimeConcurrency": "3",
+            "FIntTaskSchedulerAutoThreadLimit": "3",
+            "FIntTaskSchedulerAsyncTasksMinimumThreadCount": "4",
+            "DFIntTaskSchedulerJobInGameThreads": "4",
+            "DFIntTaskSchedulerJobInitThreads": "4",
+            "DFIntGraphicsOptimizationModeFRMFrameRateTarget": "75",
+            "FIntRenderMsFrameGatherInterval": "75",
+            "FFlagParallelLuauRuntimeConcurrency": "True",
+            "FFlagUserMaquettesSupportEnabled": "True",
+            "DFFlagExperienceSignalsIngestRefactorEnabled": "True",
+            "FFlagLuauSolverV2": "True",
+            "FFlagLuauCodegen": "True",
+            "DFIntLCCageDeformLimit": "-1",
+            "FFlagPerformanceControlLinearUtility": "True",
+            "FFlagPerformanceControlRuntimeMutex": "True",
+            "FFlagPerformanceControlUsesRuntime2": "True",
+            "FFlagSimDcdDeltaReplication": "True",
+            "FFlagDebugRenderingSetDeterministic": "True",
+            "FFlagRenderCBRefactor2": "True",
+            "FFlagSimDcdRefactorDelta3": "True",
+            "FFlagPerformanceControlEnablePortTextureManagerTrimMemory": "True",
+            "FFlagPerformanceControlEnableBoostedOomModelExecution2": "True",
+            "FFlagDebugSkyGray": "True",
+            "FStringDebugGraphicsPreferredGPUName": "NVIDIA GeForce GT 1030",
+            "DFIntGraphicsOptimizationModePerformanceBiasPercent": "100",
+            "FStringIXPGraphicsOptimizationModePerformanceBias": "performanceBias",
+            "FStringIXPGraphicsOptimizationModeBalancedBias": "null",
+            "FStringIXPGraphicsOptimizationModeQualityBias": "null",
+            "DFIntDebugPerformanceControlFrameTime": "1",
+            "FIntVertexSmoothingGroupTolerance": "0",
+            "FStringInstancesToPoolByName": "Motor6D:800;Decal:800;Frame:800;Animation:800;Vector3Value:800;SpecialMesh:800;StringValue:800;ImageLabel:800;UIStroke:800;TextLabel:800;",
+            "DFFlagSimAdaptiveExplicitlyMarkInterpolatedAssemblies": "True",
+            "DFFlagAcceleratorUpdateOnPropsAndValueTimeChange": "True",
+            "FFlagAvatarUseRuntimeThreads": "True",
+            "FIntCLI20390_2": "0",
+            "FFlagRobloxInputUsesRuntime": "True",
+            "FFlagLuaAppLegacyInputSettingRefactor": "True",
+            "FIntDefaultJitterN": "0",
+            "FFlagIsWrapLayerEnabledRefactor": "True",
+            "FFlagUserCameraControlLastInputTypeUpdate": "false",
+            "FFlagPreComputeAcceleratorArrayForSharingTimeCurve": "True",
+            "FFlagAnimationStreamSourceUseRuntimeSyncPrims": "True",
+            "DFIntPhysicsNOUCountHundredth": "2147483647",
+            "DFFlagSimAdaptiveAdjustTimestepForControllerManager": "False",
+            "DFFlagOptimizeNoCollisionPrimitiveInMidphaseCrash": "True",
+            "FFlagAnimationStreamTrackUseRuntimeSyncPrims": "True",
+            "DFIntSimExplicitlyCappedTimestepMultiplier": "500",
+            "DFIntSimDefaultHumanoidTimestepMultiplier": "100",
+            "DFIntTimestepArbiterCollidingHumanoidTsm": "100",
+            "FFlagEnablePhysicsAdaptiveTimeSteppingIXP": "True",
+            "FStringPhysicsAdaptiveTimeSteppingIXP": "Physics.DefaultTimeStepping",
+            "FFlagKeyframeSequenceUseRuntimeSyncPrims": "True",
+            "DFFlagAnimatorRetargetInterpolateFKCorrection": "True",
+            "DFIntAnimatorRetargetInterpolateFKCorrectionMaxAngleDeg": "360",
+            "DFIntAnimatorRetargetInterpolateFKCorrectionMinAngleDeg": "0",
+            "DFIntS2PhysicsSenderRate": "64",
+            "FFlagAnimatorRetargetSkipAnkleModification": "False",
+            "FFlagEnableCreateAssetAsync": "True",
+            "FFlagFixIntervalStatsSynchronization": "True",
+            "DFIntRakNetMinAckGrowthPercent": "0",
+            "FFlagHumanoidStateUseRuntimeSyncPrims": "True",
+            "FFlagRealTimeAnimationEnableRefactor": "True",
+            "FFlagQuaternionPoseCorrection": "True",
+            "FFlagLuaMenuPerfImprovements": "True",
+            "FFlagFasterPreciseTime4": "True",
+            "FFlagSmoothInputOffset": "True",
+            "DFFlagAnimatorAnywhere": "True",
+            "DFIntTimestepArbiterHumanoidLinearVelThreshold": "20",
+            "DFFlagEnableControlRigIkTargets": "True",
+            "DFFlagAnimatorPostProcessIK": "True",
+            "DFFlagAnimatorEnableNewAdornments": "True",
+            "FFlagLiveAnimationUpdateSupport": "True",
+            "FIntMaxTimestepMultiplierAcceleration": "100",
+            "FIntMaxTimestepMultiplierVelocity": "100",
+            "FIntMaxTimestepMultiplierHumanoid": "100",
+            "FIntSmoothMouseSpringFrequencyTenths": "100",
+            "FIntRuntimeMaxNumOfConditions": "1000000",
+            "FIntRuntimeMaxNumOfSchedulers": "1000000",
+            "FIntRuntimeMaxNumOfSemaphores": "1000000",
+            "FIntRuntimeMaxNumOfLatches": "1000000",
+            "FIntRuntimeMaxNumOfMutexes": "1000000",
+            "FIntRuntimeMaxNumOfThreads": "1000000",
+            "FIntRuntimeMaxNumOfStrands": "1000000",
+            "FFlagEnableTelemetryProtocol": "False",
+            "FFlagEnableTelemetryService1": "False",
+            "FFlagDisableMemoryTracking": "True",
+            "FFlagOpenTelemetryEnabled2": "False",
+            "FFlagSimStepPhysicsEnableTelemetry": "False",
+            "DFFlagDisableFastLogTelemetry": "True",
+            "FIntProfileTelemetryTickRateMs": "2147483647",
+            "FIntOpenTelemetryScheduleDelayMillis": "2147483647",
+            "DFFlagEnableTelemetryV2FRMStats": "False",
+            "DFStringTelemetryV2Url": "0.0.0.0",
+            "DFStringTelegrafAddress": "0.0.0.0",
+            "FLogTencentAuthPath": "null",
+            "FFlagEnableTelemetryServicePlaySessionInfo": "False",
+            "DFIntRbxStorageTelemetryIntervalMS": "2147483647",
+            "FIntLogTelemetrySinkIntervalSeconds": "2147483647",
+            "DFIntAnalyticsMaxSendWaitTimeMs": "2137483647",
+            "DFStringHttpPointsReporterUrl": "http://opt-out.roblox.com",
+            "DFStringAnalyticsEventStreamUrlEndpoint": "opt-out",
+            "DFIntAnalyticsServiceMonitoringPeriod": "0",
+            "FIntLuaAnalyticsReleasePeriod": "2147483647",
+            "DFStringRobloxAnalyticsURL": "http://opt-out.roblox.com",
+            "FFlagCollectAnalyticsForSystemMenu": "False",
+            "FStringAnalyticsSessionIdName": "https://opt-out.roblox.com/",
+            "DFIntMegaReplicatorNumParallelTasks": "4",
+            "DFIntNetworkClusterPacketCacheNumParallelTasks": "4",
+            "DFIntReplicationDataCacheNumParallelTasks": "4",
+            "FIntLuaGcParallelMinMultiTasks": "4",
+            "FIntSmoothClusterTaskQueueMaxParallelTasks": "4",
+            "DFIntPhysicsReceiveNumParallelTasks": "4",
+            "DFStringWebviewUrlAllowlist": "www.youtube-nocookie.com",
+            "DFFlagWindowsWebViewTelemetryEnabled": "False",
+            "DFIntMacWebViewTelemetryThrottleHundredthsPercent": "0",
+            "DFIntWindowsWebViewTelemetryThrottleHundredthsPercent": "0",
+            "FIntStudioWebView2TelemetryHundredthsPercent": "0",
+            "FFlagSyncWebViewCookieToEngine2": "False",
+            "FFlagUpdateHTTPCookieStorageFromWKWebView": "False",
+            "DFFlagVoiceChatCullingRecordEventIngestTelemetry": "False",
+            "FFlagVoiceChatCullingEnableMutedSubsTelemetry": "False",
+            "FFlagVoiceChatCullingEnableStaleSubsTelemetry": "False",
+            "FFlagVoiceChatCustomAudioMixerEnableUpdateSourcesTelemetry2": "False",
+            "FFlagVoiceChatDontSendTelemetryForPubIceTrickle": "False",
+            "FFlagVoiceChatPeerConnectionTelemetryDetails": "False",
+            "FFlagVoiceChatRobloxAudioDeviceUpdateRecordedBufferTelemetryEnabled": "False",
+            "FFlagVoiceChatSubscriptionsDroppedTelemetry": "False",
+            "FIntLuaVoiceChatAnalyticsPointsThrottle": "0",
+            "DFFlagVoiceChatJoinProfilingUsingTelemetryStat_RCC": "False",
+            "FIntVoiceChatPerfSensitiveTelemetryIntervalSeconds": "-1",
+            "DFFlagVoiceChatPossibleDuplicateSubscriptionsTelemetry": "False",
+            "DFIntVoiceChatTaskStatsTelemetryThrottleHundrethsPercent": "0",
+            "FFlagEnableLuaVoiceChatAnalyticsV2": "False",
+            "FFlagLuaVoiceChatAnalyticsBanMessage": "False",
+            "FFlagLuaVoiceChatAnalyticsUseCounterV2": "False",
+            "FFlagLuaVoiceChatAnalyticsUseEventsV2": "False",
+            "FFlagLuaVoiceChatAnalyticsUsePointsV2": "False",
+            "FStringTencentAuthPath": "null",
+            "FStringExperienceGuidelinesExplainedPageUrl": "https://www.gov.cn",
+            "DFFlagPolicyServiceReportIsNotSubjectToChinaPolicies": "False",
+            "DFFlagPolicyServiceReportDetailIsNotSubjectToChinaPolicies": "False",
+            "DFIntPolicyServiceReportDetailIsNotSubjectToChinaPoliciesHundredthsPercentage": "10000",
+            "FFlagDebugGraphicsPreferVulkan": "True",
+            "FIntDebugTextureManagerSkipMips": "2",
+            "DFFlagTextureQualityOverrideEnabled": "True",
+            "DFIntConnectionMTUSize": "900",
+            "FIntRenderLocalLightUpdatesMin": "1",
+            "FIntActivatedCountTimerMSKeyboard": "300",
+            "FFlagMessageBusCallOptimization": "True",
+            "FFlagAnimationClipMemCacheEnabled": "True",
+            "DFFlagReportAssetRequestV1Telemetry": "False",
+            "DFFlagRccLoadSoundLengthTelemetryEnabled": "False",
+            "DFIntCodecMaxIncomingPackets": "100",
+            "DFFlagDebugPerfMode": "True",
+            "DFIntPerformanceControlTextureQualityBestUtility": "-1",
+            "DFFlagSendRenderFidelityTelemetry": "False",
+            "DFIntReportRecordingDeviceInfoRateHundredthsPercentage": "0",
+            "DFIntTargetTimeDelayFacctorTenths": "10",
+            "DFIntClientNetworkInfluxHundredthsPercentage": "0",
+            "FFlagDebugForceFutureIsBrightPhase2": "True",
+            "FFlagEnableZstdForClientSettings": "False",
+            "DFFlagGpuVsCpuBoundTelemetry": "False",
+            "FFlagEnableVisBugChecks27": "False",
+            "DFIntRakNetMtuValue2InBytes": "1240",
+            "FFlagEnableInGameMenuDurationLogger": "False",
+            "DFIntWaitOnUpdateNetworkLoopEndedMS": "100",
+            "DFIntTextureQualityOverride": "0",
+            "DFFlagCollectAudioPluginTelemetry": "False",
+            "FIntGrassMovementReducedMotionFactor": "0",
+            "DFIntBatchThumbnailResultsSizeCap": "200",
+            "DFIntUserIdPlayerNameCacheSize": "33554432",
+            "FFlagReconnectDisabled": "True",
+            "FFlagFixSensitivityTextPrecision": "False",
+            "DFIntNetworkQualityResponderMaxWaitTime": "1",
+            "FIntDefaultMeshCacheSizeMB": "256",
+            "FFlagEnableQuickGameLaunch": "False",
+            "FStringPerformanceSendMeasurementAPISubdomain": "opt-out",
+            "FStringErrorUploadToBacktraceBaseUrl": "http://opt-out.roblox.com",
+            "DFIntClientLightingTechnologyChangedTelemetryHundredthsPercent": "0",
+            "FFlagRenderGpuTextureCompressor": "True",
+            "DFIntRaknetBandwidthPingSendEveryXSeconds": "1",
+            "DFFlagGraphicsQualityUsageTelemetry": "False",
+            "FIntUITextureMaxRenderTextureSize": "1024",
+            "FFlagFastGPULightCulling3": "True",
+            "FIntSimSolverResponsiveness": "2147483647",
+            "DFIntRakNetNakResendDelayMs": "10",
+            "DFIntMaxReceiveToDeserializeLatencyMilliseconds": "10",
+            "FFlagGraphicsGLEnableHQShadersExclusion": "False",
+            "FFlagCreationDBCompressRequest": "False",
+            "DFIntClientPacketExcessMicroseconds": "1000",
+            "DFIntCanHideGuiGroupId": "32380007",
+            "FIntRuntimeMaxNumOfDPCs": "64",
+            "DFIntNetworkQualityResponderUnit": "10",
+            "FFlagRenderNoLowFrmBloom": "True",
+            "DFIntWaitOnRecvFromLoopEndedMS": "100",
+            "FIntActivatedCountTimerMSMouse": "300",
+            "DFFlagReportRenderDistanceTelemetry": "False",
+            "FIntInterpolationMaxDelayMSec": "100",
+            "DFFlagUseVisBugChecks": "False",
+            "FIntLmsClientRollout2": "0",
+            "DFIntRakNetApplicationFeedbackScaleUpThresholdPercent": "0",
+            "FIntRenderLocalLightUpdatesMax": "1",
+            "FFlagDebugForceFutureIsBrightPhase3": "True",
+            "DFIntJoinDataItemEstimatedCompressionRatioHundreths": "0",
+            "DFIntClusterCompressionLevel": "0",
+            "FFlagEnableCommandAutocomplete": "False",
+            "DFIntClientPacketHealthyAllocationPercent": "20",
+            "FFlagVoiceBetaBadge": "False",
+            "FIntRenderShadowmapBias": "0",
+            "FFlagPreloadAllFonts": "True",
+            "DFIntRakNetNakResendDelayRttPercent": "50",
+            "DFIntRakNetApplicationFeedbackScaleUpFactorHundredthPercent": "0",
+            "FFlagRenderDebugCheckThreading2": "True",
+            "DFIntMaxProcessPacketsStepsPerCyclic": "5000",
+            "DFIntNetworkInProcessLimitGameplayMsClient": "0",
+            "DFFlagHttpApplyDecompressionMultiplier": "False",
+            "DFStringRobloxAnalyticsSubDomain": "opt-out",
+            "DFIntReportOutputDeviceInfoRateHundredthsPercentage": "0",
+            "DFIntLargePacketQueueSizeCutoffMB": "1000",
+            "DFFlagMergeFakeInputEvents3": "True",
+            "FIntMeshContentProviderForceCacheSize": "268435456",
+            "DFIntRakNetNakResendDelayMsMax": "100",
+            "DFIntTextureCompositorActiveJobs": "0",
+            "FIntRobloxGuiBlurIntensity": "0",
+            "FIntTerrainArraySliceSize": "0",
+            "DFIntGameNetCompressionLodByteBudgetThresholdPct": "0",
+            "DFIntMaxProcessPacketsJobScaling": "10000",
+            "FFlagTopBarUseNewBadge": "True",
+            "FFlagPreloadTextureItemsOption4": "True",
+            "DFIntCodecMaxOutgoingFrames": "10000",
+            "DFIntRaknetBandwidthInfluxHundredthsPercentageV2": "10000",
+            "DFFlagRakNetUseSlidingWindow4": "True",
+            "FIntTerrainOTAMaxTextureSize": "1024",
+            "DFFlagDebugSkipMeshVoxelizer": "True",
+            "FFlagVisBugChecksThreadYield": "False",
+            "DFIntHttpCurlConnectionCacheSize": "134217728",
+            "DFStringAltHttpPointsReporterUrl": "http://opt-out.roblox.com",
+            "FStringTerrainMaterialTable2022": "",
+            "FIntRakNetDatagramMessageIdArrayLength": "1024",
+            "FIntTaskSchedulerThreadMin": "4",
+            "FIntEmotesAnimationsPerPlayerCacheSize": "16777216",
+            "DFIntJoinDataCompressionLevel": "0",
+            "DFIntRakNetLoopMs": "1",
+            "DFIntNetworkSchemaCompressionRatio": "0",
+            "DFIntMaxDataPacketPerSend": "100000",
+            "DFIntClusterEstimatedCompressionRatioHundredths": "0",
+            "DFIntMaxProcessPacketsStepsAccumulated": "0",
+            "DFIntMaxAcceptableUpdateDelay": "1",
+            "FIntFontSizePadding": "2",
+            "DFStringCrashUploadToBacktraceBaseUrl": "http://opt-out.roblox.com",
+            "FFlagDebugLightGridShowChunks": "False",
+            "DFIntRakNetMtuValue1InBytes": "1280",
+            "FFlagLuaAppEnableFoundationColors7": "True",
+            "DFFlagFacialAnimationStreaming2": "False",
+            "DFIntClientPacketMaxDelayMs": "1",
+            "DFIntInitialAccelerationLatencyMultTenths": "1",
+            "DFIntBufferCompressionLevel": "0",
+            "DFFlagRakNetEnablePoll": "True",
+            "FFlagDebugCheckRenderThreading": "True",
+            "DFIntVoiceChatVolumeThousandths": "6000",
+            "FIntHSRClusterSymmetryDistancePercent": "10000",
+            "DFIntRakNetSelectTimeoutMs": "1",
+            "FFlagHighlightOutlinesOnMobile": "True",
+            "DFIntRakNetResendRttMultiple": "1",
+            "FFlagGraphicsGLEnableSuperHQShadersExclusion": "False",
+            "FIntRenderLocalLightFadeInMs": "0",
+            "FStringTerrainMaterialTablePre2022": "",
+            "FIntRakNetResendBufferArrayLength": "128",
+            "FFlagNewLightAttenuation": "True",
+            "DFIntTrackCountryRegionAPIHundredthsPercent": "10000",
+            "DFFlagEmitSafetyTelemetryInCallbackEnable": "False",
+            "DFFlagEnableSkipUpdatingGlobalTelemetryInfo2": "False",
+            "DFFlagRobloxTelemetryAddDeviceRAMPointsV2": "False",
+            "DFIntRakNetMtuValue3InBytes": "1200",
+            "FFlagSortKeyOptimization": "True"
+        };
+
+        // Format all FFlags into key-value strings for display
+        const allFflags = Object.entries(fflagsData).map(([key, value]) => `"${key}": ${JSON.stringify(value)}`);
+
+        // DOM Elements
+        const generateBtn = document.getElementById('generateBtn');
+        const loadingEl = document.getElementById('loading');
+        const fflagsEl = document.getElementById('fflags');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const toastContainer = document.getElementById('toast-container');
+
+        // --- Utility Functions ---
+
+        /**
+         * Replaces alert() with a custom toast notification.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', or 'info'.
+         */
+        function showToast(message, type = 'info') {
+            const colors = {
+                'success': { bg: 'bg-green-600', icon: 'fas fa-check-circle' },
+                'error': { bg: 'bg-red-600', icon: 'fas fa-times-circle' },
+                'info': { bg: 'bg-blue-600', icon: 'fas fa-info-circle' },
+            };
+            const style = colors[type] || colors['info'];
+
+            const toast = document.createElement('div');
+            toast.className = `${style.bg} text-white px-4 py-3 rounded-xl shadow-2xl transition-opacity duration-300 transform translate-x-full opacity-0 flex items-center gap-3 max-w-xs md:max-w-md`;
+            toast.innerHTML = `<i class="${style.icon}"></i> ${message}`;
+
+            toastContainer.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                toast.classList.add('translate-x-0', 'opacity-100');
+            }, 10);
+
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.remove('translate-x-0', 'opacity-100');
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        /**
+         * Picks N unique random elements from an array.
+         */
+        function pickUniqueFflags(array, n) {
+            const copy = [...array];
+            const selected = [];
+            n = Math.min(n, copy.length);
+            for (let i = 0; i < n; i++) {
+                const index = Math.floor(Math.random() * copy.length);
+                selected.push(copy[index]);
+                copy.splice(index, 1);
+            }
+            return selected;
+        }
+
+        // --- Core Logic ---
+
+        function generateFFlags() {
+            // Disable and show loading state
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Generating...`;
+            
+            // Hide previous results and buttons
+            fflagsEl.style.display = "none";
+            copyBtn.style.display = "none";
+            downloadBtn.style.display = "none";
+            
+            loadingEl.textContent = "Starting FFlags Generation...";
+
+            // Original random time simulation
+            const totalTime = Math.floor(Math.random() * 10 + 1) * 1000;
+            const phaseTime = totalTime / 3;
+
+            // Phase 1
+            setTimeout(() => {
+                loadingEl.textContent = "Optimizing parameters...";
+                // Phase 2
+                setTimeout(() => {
+                    loadingEl.textContent = "Compiling configurations...";
+                    // Phase 3 (Completion)
+                    setTimeout(() => {
+                        const selected = pickUniqueFflags(allFflags, 50);
+                        fflagsEl.style.display = "block";
+                        fflagsEl.textContent = selected.join('\n');
+                        
+                        loadingEl.textContent = "FFLAGS GENERATED SUCCESSFULLY!";
+                        showToast('50 FFlags generated!', 'success');
+                        
+                        // Re-enable and update button text
+                        generateBtn.disabled = false;
+                        generateBtn.innerHTML = `<i class="fas fa-redo"></i> Generate More`;
+                        
+                        copyBtn.style.display = "inline-flex";
+                        downloadBtn.style.display = "inline-flex";
+                    }, phaseTime);
+                }, phaseTime);
+            }, phaseTime);
+        }
+
+        // --- Event Listeners ---
+
+        generateBtn.addEventListener('click', generateFFlags);
+
+        copyBtn.addEventListener('click', () => {
+            document.execCommand('copy');
+            // document.execCommand('copy') is generally preferred in Canvas for cross-browser compatibility in iframes
+            // Fallback for modern browsers (though execCommand is safer here)
+            const textToCopy = fflagsEl.textContent;
+            if (navigator.clipboard && window.isSecureContext) {
+                 navigator.clipboard.writeText(textToCopy)
+                    .then(() => showToast('FFlags copied to clipboard!', 'success'))
+                    .catch(() => {
+                        // Fallback to execCommand if clipboard API fails
+                        const tempTextarea = document.createElement('textarea');
+                        tempTextarea.value = textToCopy;
+                        document.body.appendChild(tempTextarea);
+                        tempTextarea.select();
+                        try {
+                            document.execCommand('copy');
+                            showToast('FFlags copied to clipboard!', 'success');
+                        } catch (err) {
+                            showToast('Failed to copy FFlags.', 'error');
+                        }
+                        document.body.removeChild(tempTextarea);
+                    });
+            } else {
+                 // Classic execCommand fallback path
+                 const tempTextarea = document.createElement('textarea');
+                 tempTextarea.value = textToCopy;
+                 document.body.appendChild(tempTextarea);
+                 tempTextarea.select();
+                 try {
+                     document.execCommand('copy');
+                     showToast('FFlags copied to clipboard!', 'success');
+                 } catch (err) {
+                     showToast('Failed to copy FFlags.', 'error');
+                 }
+                 document.body.removeChild(tempTextarea);
+            }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const blob = new Blob([`{\n${fflagsEl.textContent}\n}`], {type: "text/plain"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "fps_fflags.json"; // Renamed to .json for clarity, as it is a JSON format
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('FFlags downloaded as fps_fflags.json!', 'info');
+        });
+
+    </script>
+</body>
+</html>

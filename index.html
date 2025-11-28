@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <!-- Open Graph / Facebook / Discord -->
+    <meta property="og:title" content="ROBLOX BEDWARS FAST FLAGS" />
+    <meta property="og:description" content="Generate the best FPS & PVP FFlags instantly!" />
+    <meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSidrFv1B5pHSsJzHvFKVU4bdyH6RZaNWPrFw&s" />
+    <meta property="og:url" content="https://bwfflags.github.io/com/" />
+    <meta property="og:type" content="website" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ROBLOX BEDWARS FAST FLAGS</title>
+
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#FF3B3B',
+                            dark: '#0f0f0f',
+                            surface: '#1a1a1a',
+                            green: '#00D170', // New color for MSES
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'bounce-slow': 'bounce 3s infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+        }
+        
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(255, 59, 59, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(255, 59, 59, 0.2);
+        }
+
+        /* Background Handling */
+        .bg-custom {
+            background-image: 
+                linear-gradient(to bottom, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.95) 100%),
+                url('https://tr.rbxcdn.com/180DAY-b78438e237ef33d3107cfa5300cb1127/768/432/Image/Webp/noFilter');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-gray-200 font-sans min-h-screen flex flex-col items-center bg-custom overflow-x-hidden selection:bg-brand-red selection:text-white">
+
+    <!-- Floating Badge -->
+    <div class="fixed top-6 left-6 z-50 animate-pulse">
+        <span class="bg-brand-red/90 text-white px-3 py-1 rounded text-xs font-bold tracking-widest shadow-[0_0_15px_rgba(255,59,59,0.6)] border border-red-400/50 backdrop-blur-sm">
+            BETA v3.6
+        </span>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <main class="w-full max-w-6xl px-4 py-16 flex flex-col items-center relative z-10">
+        
+        <!-- Hero Section -->
+        <header class="text-center mb-16 animate-fade-in">
+            <h1 class="font-display text-5xl md:text-7xl font-bold text-white mb-2 tracking-tight text-glow uppercase italic">
+                Roblox Bedwars <span class="text-brand-red">Fast Flags</span>
+            </h1>
+            <p class="text-gray-400 text-sm tracking-widest uppercase font-semibold">
+                Dev Team: <span class="text-white">bednuker :)</span>
+                <p class="text-gray-400 text-sm tracking-widest uppercase font-semibold">
+                <span class="text-white">© 2025 Bedwars Fast Flags. All rights reserved.</span>
+            </p>
+        </header>
+
+        <!-- What We Offer Grid -->
+        <div class="w-full mb-20">
+            <h2 class="font-display text-3xl text-white text-center mb-10 flex items-center justify-center gap-3">
+                <i class="fas fa-star text-brand-red text-xl"></i> WHAT WE OFFER <i class="fas fa-star text-brand-red text-xl"></i>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fas fa-bolt text-6xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3 group-hover:text-brand-red transition-colors">POWERFUL FFLAGS</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        We offer you the best fflags to be found from every source, covering every category including PVP and FPS optimization.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fas fa-clock text-6xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3 group-hover:text-brand-red transition-colors">INSTANT RESPONSE</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Our system is built for speed. Get an instant response whenever you ask for fast flags generation.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fas fa-robot text-6xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3 group-hover:text-brand-red transition-colors">AI CHATBOT</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        An intelligent assistant to help you configure your client perfectly. <span class="text-brand-red font-bold text-xs bg-brand-red/10 px-2 py-0.5 rounded ml-2">COMING SOON</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works & Note Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full mb-20">
+            <!-- How it Works -->
+            <div class="glass-panel p-8 rounded-2xl border-l-4 border-l-brand-red">
+                <h2 class="font-display text-2xl text-white mb-4">HOW IT WORKS</h2>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Our FPS and PVP FFlags generator gives you optimized configuration flags in seconds. Simply choose the type of flags you want below, click Start Generating, and our system will randomly select the best 50 flags for your game session. You can copy them directly or download them as a TXT file to use instantly.
+                </p>
+            </div>
+
+            <!-- Caution Note -->
+            <div class="glass-panel p-8 rounded-2xl border-l-4 border-l-yellow-500 bg-yellow-500/5">
+                <h2 class="font-display text-2xl text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle text-yellow-500"></i> QUICK NOTE
+                </h2>
+                <p class="text-gray-300 text-sm leading-relaxed">
+                    <strong class="text-white">CAUTION!</strong> Use the PVP fflags with caution as it may be bannable in some games that actively monitor physics manipulation. These flags alter game physics slightly, which could be detected if abused.
+                </p>
+            </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="flex flex-wrap justify-center gap-8 mb-20">
+            <div class="glass-card p-4 rounded-xl max-w-md w-full">
+                <div class="overflow-hidden rounded-lg mb-4 h-48">
+                    <img src="https://blox-strap.com/wp-content/uploads/2024/09/Fast-Flags-FPS-on-bloxstrap-settings.webp" alt="Bloxstrap Settings" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+                <p class="text-center text-xs text-gray-400">Use the best fflags to improve your FPS or PVP!</p>
+            </div>
+            <div class="glass-card p-4 rounded-xl max-w-md w-full">
+                <div class="overflow-hidden rounded-lg mb-4 h-48">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSidrFv1B5pHSsJzHvFKVU4bdyH6RZaNWPrFw&s" alt="Bootstrapper" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+                <p class="text-center text-xs text-gray-400">Compatible with bootstrappers like Bloxstrap.</p>
+            </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-12">
+            <!-- Primary Action Button -->
+            <button onclick="showFlagsMenu()" class="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-xl overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all transform hover:-translate-y-1">
+                <span class="relative z-10 flex items-center gap-2">
+                    LET'S GET INTO IT! <i class="fas fa-arrow-down group-hover:translate-y-1 transition-transform"></i>
+                </span>
+                <div class="absolute inset-0 bg-gray-200 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            </button>
+            
+            <!-- MSES Button - New & Active -->
+            <a href="mses.html" class="px-8 py-4 bg-transparent border border-gray-600 text-gray-400 font-bold text-lg rounded-xl hover:bg-gray-800 hover:text-brand-green hover:border-brand-green transition-all text-center">
+                MSES (SOON)
+            </a>
+
+            <!-- Changelogs Button -->
+            <a href="changelogs.html" class="px-8 py-4 bg-transparent border border-gray-600 text-gray-400 font-bold text-lg rounded-xl hover:bg-gray-800 hover:text-white hover:border-white transition-all text-center">
+                CHANGELOGS
+            </a>
+        </div>
+
+        <!-- OPTIONS MENU (Hidden by default, preserved system) -->
+        <div id="flags-menu" class="hidden w-full max-w-4xl mx-auto animate-fade-in mt-8">
+            <div class="glass-panel p-10 rounded-3xl border border-brand-red/30 relative overflow-hidden">
+                <!-- Decorative Glow -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent shadow-[0_0_20px_#FF3B3B]"></div>
+                
+                <h2 class="font-display text-4xl text-center text-white mb-2">OPTIONS</h2>
+                <p class="text-center text-gray-500 text-sm mb-10 uppercase tracking-widest">Select your optimization path</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- FPS Option -->
+                    <button onclick="goToFPS()" class="group relative h-40 bg-gray-800/50 rounded-xl border border-gray-700 hover:border-blue-500 transition-all overflow-hidden flex flex-col items-center justify-center gap-3">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <i class="fas fa-tachometer-alt text-4xl text-blue-500 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-display text-2xl text-white z-10">FPS FFLAGS</span>
+                        <span class="text-xs text-blue-400 z-10 opacity-60 group-hover:opacity-100">Maximize Performance</span>
+                    </button>
+
+                    <!-- PVP Option -->
+                    <button onclick="goToPVP()" class="group relative h-40 bg-gray-800/50 rounded-xl border border-gray-700 hover:border-brand-red transition-all overflow-hidden flex flex-col items-center justify-center gap-3">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <i class="fas fa-crosshairs text-4xl text-brand-red group-hover:scale-110 transition-transform"></i>
+                        <span class="font-display text-2xl text-white z-10">PVP FFLAGS</span>
+                        <span class="text-xs text-red-400 z-10 opacity-60 group-hover:opacity-100">Combat Optimization</span>
+                    </button>
+                    
+                    <!-- MSES Option - New -->
+                    <button onclick="goToMSES()" class="group relative h-40 bg-gray-800/50 rounded-xl border border-gray-700 hover:border-brand-green transition-all overflow-hidden flex flex-col items-center justify-center gap-3">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-green/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <i class="fas fa-microchip text-4xl text-brand-green group-hover:scale-110 transition-transform"></i>
+                        <span class="font-display text-2xl text-white z-10">MSES</span>
+                        <span class="text-xs text-green-400 z-10 opacity-60 group-hover:opacity-100">Stability & Memory</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-6 text-gray-600 text-xs relative z-10">
+        <p>&copy; 2025 Bedwars Fast Flags. All rights reserved.</p>
+    </footer>
+
+    <!-- Preserved System Logic -->
+    <script>
+        function showFlagsMenu() {
+            const menu = document.getElementById('flags-menu');
+            // Remove hidden class to display
+            menu.classList.remove('hidden');
+            // Smooth scroll to the menu
+            menu.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function goToFPS() {
+            window.location.href = 'fpsfflags.html';
+        }
+
+        function goToPVP() {
+            window.location.href = 'pvpfflags.html';
+        }
+        
+        function goToMSES() {
+            window.location.href = 'mses.html';
+        }
+    </script>
+</body>
+</html>
